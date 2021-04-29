@@ -2,7 +2,7 @@
 
 스웨거(Swagger)는 개발자가 REST 웹 서비스를 설계, 빌드, 문서화, 소비하는 일을 도와주는 대형 도구 생태걔의 지원을 받는 오픈 소스 스프트웨어 프레임워크입니다. 현재 진행하고 있는 프로젝트에 대해서 유지보수를 진행하거나 API를 만들게 될때 API서버가 어떤 스펙을 가지고 있는지 파악해야 한다. Swagger는 API의 명세와 문서를 대신 작성해 주는 아주 착한 친구 입니다.
 
-![swagger](C:\Users\USER-PC\Downloads\swagger.png)
+![swagger](https://static1.smartbear.co/swagger/media/assets/images/swagger_logo.svg)
 
 [Swagger]: https://swagger.io/	"Swagger"
 
