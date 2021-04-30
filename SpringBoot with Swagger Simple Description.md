@@ -20,7 +20,19 @@ SpringBoot 스펙
 * Spring Boot 2.4.5
 * Mave
 
-처음에 Dependency를 추가해 줍니다.
+먼저 SpringBoot 앱을 생성해 줍니다
+
+![SpringBootSwagger1](https://user-images.githubusercontent.com/54675591/116714336-a044e380-aa10-11eb-90ac-0f8be68590c3.PNG)
+
+![SpringBootSwagger2](https://user-images.githubusercontent.com/54675591/116714359-a9ce4b80-aa10-11eb-9eaa-e8ad8161cca1.PNG)
+
+![SpringBootSwagger2](https://user-images.githubusercontent.com/54675591/116714359-a9ce4b80-aa10-11eb-9eaa-e8ad8161cca1.PNG)
+
+기본적이 Swagger기능만 사용 하기 때문에 SpringWeb만 <dependency>에 추가 해준후 프로젝트를 생성해줍니다.
+
+
+
+pom.xml에서 Dependency를 추가해 줍니다.
 
 ```xml
 <dependency>
@@ -39,6 +51,8 @@ SpringBoot 스펙
 * springfox-swagger-ui는 API스펙 명세화 기능 사용등 여러가지 기능을 UI로 사용하기 위해서 필요한 라이브러리 입니다.
 
 관련 라이브러리가 다 다운되면 Swagger관련되 설정을 하기 위한 설정 클래스 SwaggerConfig를 만들어줍니다.
+
+
 
 ```java
 @Configuration
@@ -68,21 +82,83 @@ public class SwaggerConfig {
 그 다음 Controller를 작성해 줍니다.
 
 ```java
-@Controller
-public class HomeController {
-	
-	@RequestMapping("/")
-	public String index() {
-		return "login";
-	}
-	
-	@GetMapping("/login")
-	public String login(HttpServletResponse res,
-			@RequestParam(value="login_id",required=true) String login_id,
-			@RequestParam(value = "password", required=true) String password) {
-		
-		return "";
-	}
+@RestController("/api")
+public class APiController {
+
+    @GetMapping("getApi")
+    public ResponseEntity<HashMap> getApi(@RequestParam(value="param1")String param1){
+        HashMap map = new HashMap();
+        map.put("param1",param1);
+
+        return new ResponseEntity<>(map, HttpStatus.OK);
+    }
+}
+
+```
+
+이렇게 작성후 SpringBoot를 실행해준후 http://localhost:8080/swagger-ui.html 으로 접속하면 아래와 같은 화면이 나오게 됩니다.
+
+![SpringBootSwagger4](https://user-images.githubusercontent.com/54675591/116714393-b3f04a00-aa10-11eb-825a-7088f963e5b8.PNG)
+
+왜 a-pi-controller가 나오는지는 모르겠지만 탭을 펼쳐 보면 제가 작성했던  Get방식의 링크(/getApi)를 테스트 할수 있는 탭이 나오게 됩니다.  
+
+![SpringBootSwagger5](https://user-images.githubusercontent.com/54675591/116714403-b81c6780-aa10-11eb-87eb-543681328283.PNG)
+
+여기서 실제 Http를 보내볼 수도 있는데 Try it out을 눌러 `@RequestParama()`으로 지정해준 파라미터를 입력후 Execute 를 누르면 Get방식으로 Request가 전송되고 Sever response에 결과가 나오게 됩니다.
+
+![SpringBootSwagger6](https://user-images.githubusercontent.com/54675591/116714439-bfdc0c00-aa10-11eb-98c5-e321ad196658.PNG)
+
+좀더 추가적인 Swagger 설정을 해줄수도 있습니다.
+
+```java
+@Configuration
+@EnableSwagger2
+public class SwaggerConfig {
+
+    @Bean
+    public Docket api(){
+        return new Docket(DocumentationType.SWAGGER_2)
+                .consumes(getConsumeContentTypes())
+                .produces(getProduceContentTypes())
+                .apiInfo(getApiInfo())
+                .select()
+                .apis(RequestHandlerSelectors.any())
+                .paths(PathSelectors.ant("/*/**"))
+                .build();
+    }
+    private Set<String> getConsumeContentTypes(){
+        Set<String> consumes = new HashSet<>();
+        consumes.add("application/json;charset=UTF-8");
+        consumes.add("application/x-www-form-urlencoded");
+        return consumes;
+    }
+
+    private Set<String> getProduceContentTypes(){
+        Set<String> produces = new HashSet<>();
+        produces.add("application/json;charset=UTF-8");
+        return produces;
+    }
+
+    private ApiInfo getApiInfo(){
+        return new ApiInfoBuilder()
+                .title("API")
+                .description("SpringBoot With Swagger")
+                .contact(new Contact("SpringBoot with Swagger","https://github.com/go-coding1","sample@email.com"))
+                .version("1.0")
+                .build();
+    }
 }
 ```
 
+* .consume()과 .produces()는 각각 Request Content-Type, Response Content-Type에 대한 설정입니다.
+* .apiInfo()는 Swagger API문서에 대한 설명을 표기하는 메소드입니다.
+
+위 와 같이 설정후 다시 SpringBoot 서버를 재시작 한 후 다시 링크로 접속하면
+
+![SpringBootSwagger7](https://user-images.githubusercontent.com/54675591/116714461-c4082980-aa10-11eb-849c-764d3713cd83.PNG)
+
+설정했던 정보들이 Swagger UI에 나타나게 됩니다.
+
+
+
+추가적이 정보를 알고 싶다면  https://swagger.io/ https://swagger.io/ 여기 에 접속 하면 됩니다.
