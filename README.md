@@ -23,7 +23,7 @@
 
   - 주제 : 게시판 만들기
     - [YunDev Git](https://github.com/yunhaDevGit/NoticeBoard.git)
-    - [Go-Coding Git](https://github.com/go-coding1/NoticeBoard.git)
+    - [Go-Coding Git](https://github.com/go-coding1/ToyNoticeBoard.git)
 
     - 사용 스택
 
